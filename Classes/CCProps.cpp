@@ -18,6 +18,19 @@ CCProps::~CCProps()
 }
 
 
+CCProps * CCProps::create(void)
+{
+	CCProps * pRet = new CCProps();
+    if (pRet && pRet->init())
+    {
+        pRet->autorelease();
+    }
+    else
+    {
+        CC_SAFE_DELETE(pRet);
+    }
+	return pRet;
+}
 
 void CCProps::initWithType(propsType type)
 {

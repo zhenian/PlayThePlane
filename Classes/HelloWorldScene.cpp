@@ -24,6 +24,9 @@ HelloWorld::~HelloWorld()
     if (foePlanes) {
         foePlanes->release();
     }
+    if (prop) {
+        prop->release();
+    }
 }
 
 HelloWorld::HelloWorld():
@@ -75,6 +78,10 @@ bool HelloWorld::init()
     this->madeBullet();
     this->resetBullet();
     this->scheduleUpdate();
+    this->setTouchEnabled(true);
+    //CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
+    // touch事件代理
+    //[[[CCDirector sharedDirector] touchDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
     
     return true;
 }
@@ -288,12 +295,13 @@ void HelloWorld::panForTranslation(CCPoint translation)
 // 移动敌机
 void HelloWorld::moveFoePlane()
 {
-    CCFoePlane *foe;
-    CCARRAY_FOREACH(foePlanes, foe){
+    CCObject* foeObj;
+    CCARRAY_FOREACH(foePlanes, foeObj){
+        CCFoePlane *foe = (CCFoePlane *)foeObj;
         foe->setPosition(ccp(foe->getPositionX(), foe->getPositionY()-foe->speed));
         if (foe->getPositionY()<(-75)) {
-            foePlanes->removeObject(foe);
             foe->removeFromParent();
+            foePlanes->removeObject(foe);//// ??????
         }
     }
 }
@@ -349,11 +357,11 @@ CCFoePlane* HelloWorld::makeBigFoePlane()
     bigFoePlaneActionArray->removeAllObjects();
     
     CCFoePlane *bigFoePlane = CCFoePlane::createWithSpriteFrameName("enemy2_fly_1.png");
-    [bigFoePlane setPosition:ccp((arc4random()%210)+55, 732)];
-    [bigFoePlane setPlaneType:2];
-    [bigFoePlane setHp:30];
-    [bigFoePlane runAction:[CCRepeatForever actionWithAction:actPlayer]];
-    [bigFoePlane setSpeed:(arc4random()%2)+2];
+    bigFoePlane->setPosition(ccp((arc4random()%210)+55, 732));
+    bigFoePlane->planeType = 2;
+    bigFoePlane->hp = 30;
+    bigFoePlane->runAction(CCRepeatForever::create(actPlayer));
+    bigFoePlane->speed = (arc4random()%2)+2 ;
     
     return bigFoePlane;
 }
@@ -361,22 +369,22 @@ CCFoePlane* HelloWorld::makeBigFoePlane()
 // 造中飞机
 CCFoePlane* HelloWorld::makeMediumFoePlane()
 {
-    CCFoePlane *mediumFoePlane = [CCFoePlane spriteWithSpriteFrameName:@"enemy3_fly_1.png"];
-    [mediumFoePlane setPosition:ccp((arc4random()%268)+23, 732)];
-    [mediumFoePlane setPlaneType:3];
-    [mediumFoePlane setHp:15];
-    [mediumFoePlane setSpeed:(arc4random()%3)+2];
+    CCFoePlane *mediumFoePlane = CCFoePlane::createWithSpriteFrameName("enemy3_fly_1.png");
+    mediumFoePlane->setPosition(ccp((arc4random()%268)+23, 732));
+    mediumFoePlane->planeType=3;
+    mediumFoePlane->hp=15;
+    mediumFoePlane->speed = (arc4random()%3)+2;
     return mediumFoePlane;
 }
 
 // 造小飞机
 CCFoePlane* HelloWorld::makeSmallFoePlane()
 {
-    CCFoePlane *smallFoePlane = [CCFoePlane spriteWithSpriteFrameName:@"enemy1_fly_1.png"];
-    [smallFoePlane setPosition:ccp((arc4random()%240)+17, 732)];
-    [smallFoePlane setPlaneType:1];
-    [smallFoePlane setHp:1];
-    [smallFoePlane setSpeed:(arc4random()%4)+2];
+    CCFoePlane *smallFoePlane = CCFoePlane::createWithSpriteFrameName("enemy1_fly_1.png");
+    smallFoePlane->setPosition(ccp((arc4random()%240)+17, 732));
+    smallFoePlane->planeType=1;
+    smallFoePlane->hp=1;
+    smallFoePlane->speed=(arc4random()%4)+2;
     return smallFoePlane;
 }
 
@@ -385,13 +393,13 @@ void HelloWorld::makeProps()
 {
     props++;
     if (props>1520) {
-        prop = [CCProps node];
-        [prop initWithType:(arc4random()%2)+4];
-        [self addChild:prop.prop];
-        [prop propAnimation];
-        [prop retain];
+        prop = CCProps::create();
+        prop->initWithType((propsType)((arc4random()%2)+4));// ?????
+        this->addChild(prop->prop);
+        prop->propAnimation();
+        prop->retain();
         props = 0;
-        isVisible = YES;
+        isVisible = false;
     }
     
 }
@@ -403,8 +411,8 @@ void HelloWorld::bulletTimingFn()
         if (bulletTiming>0) {
             bulletTiming--;
         }else {
-            isBigBullet = NO;
-            isChangeBullet = YES;
+            isBigBullet = false;
+            isChangeBullet = true;
             bulletTiming = 900;
         }
     }
@@ -415,7 +423,8 @@ void HelloWorld::collisionDetection()
 {
     
     // 子弹跟敌机
-    CGRect bulletRec = bullet.boundingBox;
+    CCRect bulletRec = bullet->boundingBox();
+    /*
     for (CCFoePlane *foePlane in foePlanes) {
         if (CGRectIntersectsRect(bulletRec, foePlane.boundingBox)) {
             
@@ -429,13 +438,29 @@ void HelloWorld::collisionDetection()
             
         }
     }
+    */
+    
+    CCObject* foeObj;
+    CCARRAY_FOREACH(foePlanes, foeObj){
+        CCFoePlane *foePlane = (CCFoePlane *)foeObj;
+        if (bulletRec.intersectsRect(foePlane->boundingBox())  ) {
+            this->resetBullet();
+            this->fowPlaneBlowupAnimation(foePlane);
+            foePlane->hp = foePlane->hp - (isBigBullet?2:1);
+            if (foePlane->hp<=0) {
+                this->fowPlaneBlowupAnimation(foePlane);
+                foePlanes->removeObject(foePlane);
+            }
+        }
+    }
     
     // 飞机跟打飞机
-    CGRect playerRec = player.boundingBox;
+    CCRect playerRec = player->boundingBox();
     playerRec.origin.x += 25;
     playerRec.size.width -= 50;
     playerRec.origin.y -= 10;
     playerRec.size.height -= 10;
+    /*
     for (CCFoePlane *foePlane in foePlanes) {
         if (CGRectIntersectsRect(playerRec, foePlane.boundingBox)) {
             [self gameOver];
@@ -444,26 +469,43 @@ void HelloWorld::collisionDetection()
             [foePlanes removeObject:foePlane];
         }
     }
+     */
+    CCARRAY_FOREACH(foePlanes, foeObj){
+        CCFoePlane *foePlane = (CCFoePlane *)foeObj;
+        if (playerRec.intersectsRect(foePlane->boundingBox()) ) {
+            this->gameOver();
+            this->playerBlowupAnimation();
+            this->fowPlaneBlowupAnimation(foePlane);
+            foePlanes->removeObject(foePlane);
+        }
+    }
     
     // 飞机跟道具
     
     if (isVisible) {
-        CGRect playerRec1 = player.boundingBox;
-        CGRect propRec = prop.prop.boundingBox;
-        if (CGRectIntersectsRect(playerRec1, propRec)) {
+        CCRect playerRec1 = player->boundingBox();
+        CCRect propRec = prop->prop->boundingBox();
+        if (playerRec1.intersectsRect(propRec)) {
             
-            [prop.prop stopAllActions];
-            [prop.prop removeFromParent];
-            isVisible = NO;
+            prop->prop->stopAllActions();
+            prop->prop->removeFromParent();
+            isVisible = false;
             
-            if (prop.type == propsTypeBullet) {
-                isBigBullet = YES;
-                isChangeBullet = YES;
-            }else if (prop.type == propsTypeBomb) {
+            if (prop->type == propsTypeBullet) {
+                isBigBullet = true;
+                isChangeBullet = true;
+            }else if (prop->type == propsTypeBomb) {
+                /*
                 for (CCFoePlane *foePlane in foePlanes) {
                     [self fowPlaneBlowupAnimation:foePlane];
                 }
-                [foePlanes removeAllObjects];
+                */
+                CCObject *foeObj4;
+                CCARRAY_FOREACH(foePlanes, foeObj4){
+                    CCFoePlane *foePlane = (CCFoePlane *)foeObj4;
+                    this->fowPlaneBlowupAnimation(foePlane);
+                }
+                foePlanes->removeAllObjects();
             }
         }
     }
@@ -474,45 +516,45 @@ void HelloWorld::collisionDetection()
 // 添加打击效果
 void HelloWorld::fowPlaneHitAnimation(CCFoePlane* foePlane)
 {
-    if (foePlane.planeType == 3) {
-        if (foePlane.hp==13) {
-            NSMutableArray *playerActionArray = [NSMutableArray array];
+    if (foePlane->planeType == 3) {
+        if (foePlane->hp==13) {
+            CCArray *playerActionArray = new CCArray;
             for (int i = 1 ; i<=2; i++) {
-                NSString* key = [NSString stringWithFormat:@"enemy3_hit_%d.png",i];
+                CCString* key = CCString::createWithFormat("enemy3_hit_%d.png",i);
                 //从内存池中取出Frame
-                CCSpriteFrame* frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:key];
+                CCSpriteFrame* frame = CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(key->getCString());
                 //添加到序列中
-                [playerActionArray addObject:frame];
+                playerActionArray->addObject(frame);
             }
             
             //将数组转化为动画序列,换帧间隔0.1秒
-            CCAnimation* animPlayer = [CCAnimation animationWithSpriteFrames:playerActionArray delay:0.1f];
+            CCAnimation* animPlayer = CCAnimation::createWithSpriteFrames(playerActionArray,0.1f);
             //生成动画播放的行为对象
-            id actPlayer = [CCAnimate actionWithAnimation:animPlayer];
+            CCAnimate* actPlayer = CCAnimate::create(animPlayer);
             //清空缓存数组
-            [playerActionArray removeAllObjects];
-            [foePlane stopAllActions];
-            [foePlane runAction:[CCRepeatForever actionWithAction:actPlayer]];
+            playerActionArray->removeAllObjects();
+            foePlane->stopAllActions();
+            foePlane->runAction(CCRepeatForever::create(actPlayer));
         }
-    }else if (foePlane.planeType == 2) {
-        if (foePlane.hp==20) {
-            NSMutableArray *playerActionArray = [NSMutableArray array];
+    }else if (foePlane->planeType == 2) {
+        if (foePlane->hp==20) {
+            CCArray *playerActionArray = new CCArray;
             for (int i = 1 ; i<=1; i++) {
-                NSString* key = [NSString stringWithFormat:@"enemy2_hit_%d.png",i];
+                CCString* key = CCString::createWithFormat("enemy2_hit_%d.png",i);
                 //从内存池中取出Frame
-                CCSpriteFrame* frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:key];
+                CCSpriteFrame* frame = CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(key->getCString());
                 //添加到序列中
-                [playerActionArray addObject:frame];
+                playerActionArray->addObject(frame);
             }
             
             //将数组转化为动画序列,换帧间隔0.1秒
-            CCAnimation* animPlayer = [CCAnimation animationWithSpriteFrames:playerActionArray delay:0.1f];
+            CCAnimation* animPlayer = CCAnimation::createWithSpriteFrames(playerActionArray,0.1f);
             //生成动画播放的行为对象
-            id actPlayer = [CCAnimate actionWithAnimation:animPlayer];
+            CCAnimate* actPlayer = CCAnimate::create(animPlayer);
             //清空缓存数组
-            [playerActionArray removeAllObjects];
-            [foePlane stopAllActions];
-            [foePlane runAction:[CCRepeatForever actionWithAction:actPlayer]];
+            playerActionArray->removeAllObjects();
+            foePlane->stopAllActions();
+            foePlane->runAction(CCRepeatForever::create(actPlayer));
         }
     }
 }
@@ -521,62 +563,63 @@ void HelloWorld::fowPlaneHitAnimation(CCFoePlane* foePlane)
 void HelloWorld::fowPlaneBlowupAnimation(CCFoePlane*foePlane)
 {
     int forSum;
-    if (foePlane.planeType == 3) {
+    if (foePlane->planeType == 3) {
         forSum = 4;
         score+=6000;
-    }else if (foePlane.planeType  == 2) {
+    }else if (foePlane->planeType  == 2) {
         score+=30000;
         forSum = 7;
-    }else if (foePlane.planeType  == 1) {
+    }else if (foePlane->planeType  == 1) {
         forSum = 4;
         score+=1000;
     }
     
-    [scoreLabel setString:[NSString stringWithFormat:@"%d",score]];
+    scoreLabel->setString(CCString::createWithFormat("%d",score)->getCString());
     
-    [foePlane stopAllActions];
-    NSMutableArray *foePlaneActionArray = [NSMutableArray array];
+    foePlane->stopAllActions(); 
+    CCArray *foePlaneActionArray = new CCArray;
     
-    for (int i = 1; i<=forSum ; i++ ) {
-        NSString* key = [NSString stringWithFormat:@"enemy%d_blowup_%i.png",foePlane.planeType , i];
+    for (int i = 1; i<=forSum ; i++ ) { 
+        CCString* key = CCString::createWithFormat("enemy%d_blowup_%i.png",foePlane->planeType , i);
         //从内存池中取出Frame
-        CCSpriteFrame* frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:key];
+        CCSpriteFrame* frame = CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(key->getCString());
         //添加到序列中
-        [foePlaneActionArray addObject:frame];
+        foePlaneActionArray->addObject(frame);
     }
     
     //将数组转化为动画序列,换帧间隔0.1秒
-    CCAnimation* animPlayer = [CCAnimation animationWithSpriteFrames:foePlaneActionArray delay:0.1f];
+    CCAnimation* animPlayer = CCAnimation::createWithSpriteFrames(foePlaneActionArray,0.1f);
     //生成动画播放的行为对象
-    id actFowPlane = [CCAnimate actionWithAnimation:animPlayer];
-    id end = [CCCallFuncN actionWithTarget:self selector:@selector(blowupEnd:)];
+    CCAnimate* actFowPlane = CCAnimate::create(animPlayer);
+    CCCallFuncN* end = CCCallFuncN::create(this, callfuncN_selector(HelloWorld::blowupEnd));//?????
+    //[CCCallFuncN actionWithTarget:self selector:@selector(blowupEnd:)];
     //清空缓存数组
-    [foePlaneActionArray removeAllObjects];
+    foePlaneActionArray->removeAllObjects();
     
-    [foePlane runAction:[CCSequence actions:actFowPlane, end, nil]];
+    foePlane->runAction(CCSequence::create(actFowPlane, end, NULL));
 }
 
 // 飞机爆炸 
 void HelloWorld::playerBlowupAnimation()
 {
-    NSMutableArray *foePlaneActionArray = [NSMutableArray array];
     
-    for (int i = 1; i<=4 ; i++ ) {
-        NSString* key = [NSString stringWithFormat:@"hero_blowup_%i.png", i];
+    CCArray *foePlaneActionArray = new CCArray;
+    for (int i = 1; i<=4 ; i++ ) { 
+        CCString* key = CCString::createWithFormat("hero_blowup_%i.png", i);
         //从内存池中取出Frame
-        CCSpriteFrame* frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:key];
+        CCSpriteFrame* frame = CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(key->getCString());
         //添加到序列中
-        [foePlaneActionArray addObject:frame];
+        foePlaneActionArray->addObject(frame);
     }
     
     //将数组转化为动画序列,换帧间隔0.1秒
-    CCAnimation* animPlayer = [CCAnimation animationWithSpriteFrames:foePlaneActionArray delay:0.1f];
-    //生成动画播放的行为对象
-    id actFowPlane = [CCAnimate actionWithAnimation:animPlayer];
+    CCAnimation* animPlayer = CCAnimation::createWithSpriteFrames(foePlaneActionArray,0.1f);
+    //生成动画播放的行为对象 
+    CCAnimate* actFowPlane = CCAnimate::create(animPlayer);
     //清空缓存数组
-    [foePlaneActionArray removeAllObjects];
+    foePlaneActionArray->removeAllObjects();
     
-    [player runAction:[CCSequence actions:actFowPlane, nil]];
+    player->runAction(CCSequence::create(actFowPlane, NULL));
 }
 //
 void HelloWorld::playerBlowupEnd(CCObject* sender)
@@ -588,39 +631,40 @@ void HelloWorld::blowupEnd(CCObject* sender)
 {
     
     CCFoePlane *foePlane = (CCFoePlane *) sender;
-    [foePlane removeFromParent];
+    foePlane->removeFromParent();
 }
 
 void HelloWorld::gameOver()
 {
     
-    isGameOver = YES;
-    CCNode *node;
-    CCARRAY_FOREACH([self children], node){
-        [node stopAllActions];
+    isGameOver = true;
+    CCObject *nodeObj;
+    CCARRAY_FOREACH(this->getChildren(), nodeObj){
+        CCNode *node = (CCNode *)nodeObj;
+        node->stopAllActions();
     }
     
-    gameOverLabel = [CCLabelTTF labelWithString:@"GameOver" fontName:@"MarkerFelt-Thin" fontSize:35];
-    [gameOverLabel setPosition:ccp(160, 300)];
-    [self addChild:gameOverLabel z:4];
+    gameOverLabel = CCLabelTTF::create("GameOver" ,"MarkerFelt-Thin",35);
+    gameOverLabel->setPosition(ccp(160, 300));
+    this->addChild(gameOverLabel,4);
     
-    CCMenuItemFont *gameOverItem = [CCMenuItemFont itemWithString:@"restart" target:self selector:@selector(restart)];
-    [gameOverItem setFontName:@"MarkerFelt-Thin"];
-    [gameOverItem setFontSize:30];
-    restart = [CCMenu menuWithItems:gameOverItem, nil];
-    [restart setPosition:ccp(160, 200)];
-    [self addChild:restart z:4];
+    CCMenuItemFont *gameOverItem = CCMenuItemFont::create("restart", this, menu_selector(HelloWorld::restartFn));
+    gameOverItem->setFontName("MarkerFelt-Thin");
+    gameOverItem->setFontSize(30);
+    restart = CCMenu::create(gameOverItem,NULL);
+    restart->setPosition(ccp(160, 200));
+    this->addChild(restart,4);
 }
 
 void HelloWorld::restartFn()
 {
-    [self removeAllChildren];
-    [foePlanes removeAllObjects];
-    [self initData];
-    [self loadBackground];
-    [self loadPlayer];
-    [self madeBullet];
-    [self resetBullet];
+    this->removeAllChildren();
+    foePlanes->removeAllObjects();
+    this->initData();
+    this->loadBackground();
+    this->loadPlayer();
+    this->madeBullet();
+    this->resetBullet();
     
 }
 

@@ -21,6 +21,7 @@ class CCProps : public cocos2d::CCNode
 public:
     CCProps();
 	~CCProps();
+    static CCProps * create(void);
     void initWithType(propsType type);
     void propAnimation();
 public:

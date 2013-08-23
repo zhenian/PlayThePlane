@@ -16,7 +16,8 @@ class CCFoePlane : public cocos2d::CCSprite
 public:
     CCFoePlane();
 	~CCFoePlane();
-    
+    static CCFoePlane* createWithSpriteFrameName(const char *pszSpriteFrameName);
+
 public:
     int planeType, hp, speed;
  

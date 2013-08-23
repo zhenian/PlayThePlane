@@ -1,0 +1,11 @@
+Thumbs.db
+*.swp
+*.pbxuser
+*.perspective
+*.perspectivev3
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.mode1v3
+*.mode2v3
+build/
+.DS_Store

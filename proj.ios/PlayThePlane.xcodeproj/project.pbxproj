@@ -205,6 +205,13 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		7855E0E1153FEF240059DD9A /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 7855E0DF153FEF240059DD9A /* Default.png */; };
+		987C3A6817C78947005EBFF0 /* IntroLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 987C3A6617C78947005EBFF0 /* IntroLayer.cpp */; };
+		987C3A6B17C78CC5005EBFF0 /* CCFoePlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 987C3A6917C78CC4005EBFF0 /* CCFoePlane.cpp */; };
+		987C3A6E17C78D7F005EBFF0 /* CCProps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 987C3A6C17C78D7F005EBFF0 /* CCProps.cpp */; };
+		987C3A7317C79608005EBFF0 /* gameArts-hd.plist in Resources */ = {isa = PBXBuildFile; fileRef = 987C3A6F17C79608005EBFF0 /* gameArts-hd.plist */; };
+		987C3A7417C79608005EBFF0 /* gameArts-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 987C3A7017C79608005EBFF0 /* gameArts-hd.png */; };
+		987C3A7517C79608005EBFF0 /* gameArts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 987C3A7117C79608005EBFF0 /* gameArts.plist */; };
+		987C3A7617C79608005EBFF0 /* gameArts.png in Resources */ = {isa = PBXBuildFile; fileRef = 987C3A7217C79608005EBFF0 /* gameArts.png */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
 		BF1712461292920000B8313A /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB212928DE900B8313A /* libxml2.dylib */; };
 		BF1712471292920000B8313A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB412928DE900B8313A /* libz.dylib */; };
@@ -642,6 +649,16 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		7855E0DF153FEF240059DD9A /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = SOURCE_ROOT; };
+		987C3A6617C78947005EBFF0 /* IntroLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IntroLayer.cpp; path = ../Classes/IntroLayer.cpp; sourceTree = "<group>"; };
+		987C3A6717C78947005EBFF0 /* IntroLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IntroLayer.h; path = ../Classes/IntroLayer.h; sourceTree = "<group>"; };
+		987C3A6917C78CC4005EBFF0 /* CCFoePlane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCFoePlane.cpp; path = ../Classes/CCFoePlane.cpp; sourceTree = "<group>"; };
+		987C3A6A17C78CC4005EBFF0 /* CCFoePlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCFoePlane.h; path = ../Classes/CCFoePlane.h; sourceTree = "<group>"; };
+		987C3A6C17C78D7F005EBFF0 /* CCProps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCProps.cpp; path = ../Classes/CCProps.cpp; sourceTree = "<group>"; };
+		987C3A6D17C78D7F005EBFF0 /* CCProps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCProps.h; path = ../Classes/CCProps.h; sourceTree = "<group>"; };
+		987C3A6F17C79608005EBFF0 /* gameArts-hd.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "gameArts-hd.plist"; sourceTree = "<group>"; };
+		987C3A7017C79608005EBFF0 /* gameArts-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gameArts-hd.png"; sourceTree = "<group>"; };
+		987C3A7117C79608005EBFF0 /* gameArts.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = gameArts.plist; sourceTree = "<group>"; };
+		987C3A7217C79608005EBFF0 /* gameArts.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gameArts.png; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB212928DE900B8313A /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -1179,6 +1196,12 @@
 				1AFAF8B416D35DE700DB1158 /* AppDelegate.h */,
 				1AFAF8B516D35DE700DB1158 /* HelloWorldScene.cpp */,
 				1AFAF8B616D35DE700DB1158 /* HelloWorldScene.h */,
+				987C3A6617C78947005EBFF0 /* IntroLayer.cpp */,
+				987C3A6717C78947005EBFF0 /* IntroLayer.h */,
+				987C3A6917C78CC4005EBFF0 /* CCFoePlane.cpp */,
+				987C3A6A17C78CC4005EBFF0 /* CCFoePlane.h */,
+				987C3A6C17C78D7F005EBFF0 /* CCProps.cpp */,
+				987C3A6D17C78D7F005EBFF0 /* CCProps.h */,
 			);
 			name = Classes;
 			path = ../classes;
@@ -1476,6 +1499,10 @@
 		78C7DDAA14EBA5050085D0C2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				987C3A6F17C79608005EBFF0 /* gameArts-hd.plist */,
+				987C3A7017C79608005EBFF0 /* gameArts-hd.png */,
+				987C3A7117C79608005EBFF0 /* gameArts.plist */,
+				987C3A7217C79608005EBFF0 /* gameArts.png */,
 				1AFAF8B916D35E4900DB1158 /* CloseNormal.png */,
 				1AFAF8BA16D35E4900DB1158 /* CloseSelected.png */,
 				1AFAF8BB16D35E4900DB1158 /* HelloWorld.png */,
@@ -1575,6 +1602,10 @@
 				1A9CE8891765A12C000E3062 /* json_internalmap.inl in Resources */,
 				1A9CE88C1765A12C000E3062 /* json_valueiterator.inl in Resources */,
 				1A9CE88E1765A12C000E3062 /* sconscript in Resources */,
+				987C3A7317C79608005EBFF0 /* gameArts-hd.plist in Resources */,
+				987C3A7417C79608005EBFF0 /* gameArts-hd.png in Resources */,
+				987C3A7517C79608005EBFF0 /* gameArts.plist in Resources */,
+				987C3A7617C79608005EBFF0 /* gameArts.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1768,6 +1799,9 @@
 				1A9CE8981765A12C000E3062 /* CCComAudio.cpp in Sources */,
 				1A9CE8991765A12C000E3062 /* CCComController.cpp in Sources */,
 				1A9CE89A1765A12C000E3062 /* CCInputDelegate.cpp in Sources */,
+				987C3A6817C78947005EBFF0 /* IntroLayer.cpp in Sources */,
+				987C3A6B17C78CC5005EBFF0 /* CCFoePlane.cpp in Sources */,
+				987C3A6E17C78D7F005EBFF0 /* CCProps.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

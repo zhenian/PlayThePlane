@@ -213,6 +213,13 @@
 		41BC70E815BF81A5006A0A6C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 41BC70E115BF81A5006A0A6C /* main.m */; };
 		8C583FAD169DB6D500F63A10 /* CCEditBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C583FA8169DB6D500F63A10 /* CCEditBox.cpp */; };
 		8C583FAE169DB6D500F63A10 /* CCEditBoxImplMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8C583FAC169DB6D500F63A10 /* CCEditBoxImplMac.mm */; };
+		9805397017C7D1B300B8D7F1 /* CCProps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9805396A17C7D1B300B8D7F1 /* CCProps.cpp */; };
+		9805397117C7D1B300B8D7F1 /* CCFoePlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9805396C17C7D1B300B8D7F1 /* CCFoePlane.cpp */; };
+		9805397217C7D1B300B8D7F1 /* IntroLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9805396E17C7D1B300B8D7F1 /* IntroLayer.cpp */; };
+		9805397717C7D1C000B8D7F1 /* gameArts-hd.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9805397317C7D1C000B8D7F1 /* gameArts-hd.plist */; };
+		9805397817C7D1C000B8D7F1 /* gameArts-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 9805397417C7D1C000B8D7F1 /* gameArts-hd.png */; };
+		9805397917C7D1C000B8D7F1 /* gameArts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9805397517C7D1C000B8D7F1 /* gameArts.plist */; };
+		9805397A17C7D1C000B8D7F1 /* gameArts.png in Resources */ = {isa = PBXBuildFile; fileRef = 9805397617C7D1C000B8D7F1 /* gameArts.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -644,6 +651,16 @@
 		8C583FAA169DB6D500F63A10 /* CCEditBoxImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCEditBoxImpl.h; path = CCEditBox/CCEditBoxImpl.h; sourceTree = "<group>"; };
 		8C583FAB169DB6D500F63A10 /* CCEditBoxImplMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCEditBoxImplMac.h; path = CCEditBox/CCEditBoxImplMac.h; sourceTree = "<group>"; };
 		8C583FAC169DB6D500F63A10 /* CCEditBoxImplMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CCEditBoxImplMac.mm; path = CCEditBox/CCEditBoxImplMac.mm; sourceTree = "<group>"; };
+		9805396A17C7D1B300B8D7F1 /* CCProps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCProps.cpp; path = ../Classes/CCProps.cpp; sourceTree = "<group>"; };
+		9805396B17C7D1B300B8D7F1 /* CCProps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCProps.h; path = ../Classes/CCProps.h; sourceTree = "<group>"; };
+		9805396C17C7D1B300B8D7F1 /* CCFoePlane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCFoePlane.cpp; path = ../Classes/CCFoePlane.cpp; sourceTree = "<group>"; };
+		9805396D17C7D1B300B8D7F1 /* CCFoePlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCFoePlane.h; path = ../Classes/CCFoePlane.h; sourceTree = "<group>"; };
+		9805396E17C7D1B300B8D7F1 /* IntroLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IntroLayer.cpp; path = ../Classes/IntroLayer.cpp; sourceTree = "<group>"; };
+		9805396F17C7D1B300B8D7F1 /* IntroLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IntroLayer.h; path = ../Classes/IntroLayer.h; sourceTree = "<group>"; };
+		9805397317C7D1C000B8D7F1 /* gameArts-hd.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "gameArts-hd.plist"; sourceTree = "<group>"; };
+		9805397417C7D1C000B8D7F1 /* gameArts-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gameArts-hd.png"; sourceTree = "<group>"; };
+		9805397517C7D1C000B8D7F1 /* gameArts.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = gameArts.plist; sourceTree = "<group>"; };
+		9805397617C7D1C000B8D7F1 /* gameArts.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gameArts.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -672,6 +689,12 @@
 		15AA9C4015B7EC450033D6C2 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				9805396A17C7D1B300B8D7F1 /* CCProps.cpp */,
+				9805396B17C7D1B300B8D7F1 /* CCProps.h */,
+				9805396C17C7D1B300B8D7F1 /* CCFoePlane.cpp */,
+				9805396D17C7D1B300B8D7F1 /* CCFoePlane.h */,
+				9805396E17C7D1B300B8D7F1 /* IntroLayer.cpp */,
+				9805396F17C7D1B300B8D7F1 /* IntroLayer.h */,
 				1AFAF8C616D3886000DB1158 /* AppDelegate.cpp */,
 				1AFAF8C716D3886000DB1158 /* AppDelegate.h */,
 				1AFAF8C816D3886000DB1158 /* HelloWorldScene.cpp */,
@@ -1434,6 +1457,10 @@
 		78C7DDAA14EBA5050085D0C2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9805397317C7D1C000B8D7F1 /* gameArts-hd.plist */,
+				9805397417C7D1C000B8D7F1 /* gameArts-hd.png */,
+				9805397517C7D1C000B8D7F1 /* gameArts.plist */,
+				9805397617C7D1C000B8D7F1 /* gameArts.png */,
 				1AFAF8C016D3884900DB1158 /* CloseNormal.png */,
 				1AFAF8C116D3884900DB1158 /* CloseSelected.png */,
 				1AFAF8C216D3884900DB1158 /* HelloWorld.png */,
@@ -1535,6 +1562,10 @@
 				1A9CE9931765A7FA000E3062 /* json_internalmap.inl in Resources */,
 				1A9CE9961765A7FA000E3062 /* json_valueiterator.inl in Resources */,
 				1A9CE9981765A7FA000E3062 /* sconscript in Resources */,
+				9805397717C7D1C000B8D7F1 /* gameArts-hd.plist in Resources */,
+				9805397817C7D1C000B8D7F1 /* gameArts-hd.png in Resources */,
+				9805397917C7D1C000B8D7F1 /* gameArts.plist in Resources */,
+				9805397A17C7D1C000B8D7F1 /* gameArts.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1728,6 +1759,9 @@
 				1A9CE9A41765A7FA000E3062 /* CCInputDelegate.cpp in Sources */,
 				1A9CE9A51765A7FA000E3062 /* LocalStorage.cpp in Sources */,
 				1A9CE9A61765A7FA000E3062 /* LocalStorageAndroid.cpp in Sources */,
+				9805397017C7D1B300B8D7F1 /* CCProps.cpp in Sources */,
+				9805397117C7D1B300B8D7F1 /* CCFoePlane.cpp in Sources */,
+				9805397217C7D1B300B8D7F1 /* IntroLayer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

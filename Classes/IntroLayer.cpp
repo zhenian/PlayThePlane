@@ -33,15 +33,6 @@ bool IntroLayer::init()
     {
         return false;
     }
-    
-    CCSize size = CCDirector::sharedDirector()->getWinSize();
-    
-    CCSprite *background = CCSprite::create("Default.png");
-    background->setRotation(90);
-    background->setPosition(ccp(size.width/2, size.height/2));
-    this->addChild(background);
-	this->setTouchEnabled(true);
-    
     return true;
 }
 

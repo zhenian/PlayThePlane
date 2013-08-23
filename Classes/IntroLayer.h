@@ -20,19 +20,6 @@ public:
     virtual bool init();
     virtual void onEnter();
     static cocos2d::CCScene* scene();
-    /*
-    // a selector callback
-    void menuCloseCallback(CCObject* pSender);
-    // preprocessor macro for "static create()" constructor ( node() deprecated )
-    
-    
-    void playGame(CCObject* pSender);
-    virtual bool ccTouchBegan(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent);
-    virtual void ccTouchEnded(cocos2d::CCTouch *pTouch, cocos2d::CCEvent *pEvent);
-    virtual void registerWithTouchDispatcher();
-private:
-    bool isEnter;
-     */
 };
 
 

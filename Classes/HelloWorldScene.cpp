@@ -114,7 +114,7 @@ void HelloWorld::initData() {
     isVisible = false;
     isGameOver = false;
     foePlanes = new CCArray;
-    foePlanes->retain();
+    //foePlanes->retain();
     
 }
 
@@ -299,9 +299,10 @@ void HelloWorld::moveFoePlane()
     CCARRAY_FOREACH(foePlanes, foeObj){
         CCFoePlane *foe = (CCFoePlane *)foeObj;
         foe->setPosition(ccp(foe->getPositionX(), foe->getPositionY()-foe->speed));
-        if (foe->getPositionY()<(-75)) {
-            foe->removeFromParent();
-            foePlanes->removeObject(foe);//// ??????
+        if (foe->getPositionY()< -75) {
+            foePlanes->removeObject(foe);
+            CCLog("--------------  foe is NULL?  %d",foe==NULL);
+            foe->removeFromParent();//// ??????
         }
     }
 }
@@ -470,8 +471,9 @@ void HelloWorld::collisionDetection()
         }
     }
      */
-    CCARRAY_FOREACH(foePlanes, foeObj){
-        CCFoePlane *foePlane = (CCFoePlane *)foeObj;
+    CCObject *foeObj3;
+    CCARRAY_FOREACH(foePlanes, foeObj3){
+        CCFoePlane *foePlane = (CCFoePlane *)foeObj3;
         if (playerRec.intersectsRect(foePlane->boundingBox()) ) {
             this->gameOver();
             this->playerBlowupAnimation();
@@ -562,7 +564,7 @@ void HelloWorld::fowPlaneHitAnimation(CCFoePlane* foePlane)
 // 爆炸动画 
 void HelloWorld::fowPlaneBlowupAnimation(CCFoePlane*foePlane)
 {
-    int forSum;
+    int forSum=0;
     if (foePlane->planeType == 3) {
         forSum = 4;
         score+=6000;

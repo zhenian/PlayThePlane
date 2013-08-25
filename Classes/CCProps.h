@@ -24,8 +24,10 @@ public:
     static CCProps * create(void);
     void initWithType(propsType type);
     void propAnimation();
+    //cocos2d::CCSprite *prop;
+    CC_SYNTHESIZE_RETAIN(cocos2d::CCSprite*, __prop, Prop);
+
 public:
-    cocos2d::CCSprite *prop;
     propsType type;
 };
 

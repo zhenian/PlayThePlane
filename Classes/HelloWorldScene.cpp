@@ -3,6 +3,7 @@
 USING_NS_CC;
 #define WINDOWHEIGHT CCDirector::sharedDirector()->getWinSize().height
 
+static int __cnt = 1;
 
 CCScene* HelloWorld::scene()
 {
@@ -21,9 +22,7 @@ CCScene* HelloWorld::scene()
 
 HelloWorld::~HelloWorld()
 {
-    if (foePlanes) {
-        foePlanes->release();
-    }
+    CC_SAFE_RELEASE_NULL(__foePlanes);
     if (prop) {
         prop->release();
     }
@@ -42,7 +41,7 @@ isBigBullet(false),
 isChangeBullet(false),
 bulletSpeed(0),
 bulletTiming(0),
-foePlanes(NULL),
+__foePlanes(NULL),
 bigPlan(0),
 smallPlan(0),
 mediumPlan(0),
@@ -113,7 +112,7 @@ void HelloWorld::initData() {
     score = 0;
     isVisible = false;
     isGameOver = false;
-    foePlanes = new CCArray;
+    this->setFoePlanes(CCArray::create());
     //foePlanes->retain();
     
 }
@@ -296,13 +295,19 @@ void HelloWorld::panForTranslation(CCPoint translation)
 void HelloWorld::moveFoePlane()
 {
     CCObject* foeObj;
-    CCARRAY_FOREACH(foePlanes, foeObj){
+    CCARRAY_FOREACH(this->getFoePlanes(), foeObj){
         CCFoePlane *foe = (CCFoePlane *)foeObj;
         foe->setPosition(ccp(foe->getPositionX(), foe->getPositionY()-foe->speed));
+         // 敌机出了底屏
         if (foe->getPositionY()< -75) {
-            foePlanes->removeObject(foe);
-            CCLog("--------------  foe is NULL?  %d",foe==NULL);
-            foe->removeFromParent();//// ??????
+            CCLog("-------  out of scream  1   __id=%d",foe->__id);
+            this->getFoePlanes()->removeObject(foe);
+            if(foe == NULL){ 
+            }else{
+                CCLog("-------  out of scream  2   __id=%d",foe->__id);
+                foe->removeFromParent();//// ??????
+                CCLog("--------------  foe is NOT NULL removve from parent (%d) %d",foe->__id,foe==NULL);
+            }
         }
     }
 }
@@ -317,21 +322,21 @@ void HelloWorld::addFoePlane()
     if (bigPlan>500) {
         CCFoePlane *foePlane = this->makeBigFoePlane();
         this->addChild(foePlane,3);
-        this->foePlanes->addObject(foePlane);
+        this->getFoePlanes()->addObject(foePlane);
         bigPlan = 0;
     }
     
     if (mediumPlan>400) {
         CCFoePlane *foePlane = this->makeMediumFoePlane();
         this->addChild(foePlane,3);
-        this->foePlanes->addObject(foePlane);
+        this->getFoePlanes()->addObject(foePlane);
         mediumPlan = 0;
     }
     
     if (smallPlan>45) {
         CCFoePlane *foePlane = this->makeSmallFoePlane();
         this->addChild(foePlane,3);
-        this->foePlanes->addObject(foePlane);
+        this->getFoePlanes()->addObject(foePlane);
         smallPlan = 0;
     }
     
@@ -363,7 +368,7 @@ CCFoePlane* HelloWorld::makeBigFoePlane()
     bigFoePlane->hp = 30;
     bigFoePlane->runAction(CCRepeatForever::create(actPlayer));
     bigFoePlane->speed = (arc4random()%2)+2 ;
-    
+    bigFoePlane->__id = __cnt++;
     return bigFoePlane;
 }
 
@@ -375,6 +380,7 @@ CCFoePlane* HelloWorld::makeMediumFoePlane()
     mediumFoePlane->planeType=3;
     mediumFoePlane->hp=15;
     mediumFoePlane->speed = (arc4random()%3)+2;
+    mediumFoePlane->__id = __cnt++;
     return mediumFoePlane;
 }
 
@@ -386,6 +392,7 @@ CCFoePlane* HelloWorld::makeSmallFoePlane()
     smallFoePlane->planeType=1;
     smallFoePlane->hp=1;
     smallFoePlane->speed=(arc4random()%4)+2;
+    smallFoePlane->__id = __cnt++;
     return smallFoePlane;
 }
 
@@ -396,7 +403,7 @@ void HelloWorld::makeProps()
     if (props>1520) {
         prop = CCProps::create();
         prop->initWithType((propsType)((arc4random()%2)+4));// ?????
-        this->addChild(prop->prop);
+        this->addChild(prop->getProp());
         prop->propAnimation();
         prop->retain();
         props = 0;
@@ -425,32 +432,20 @@ void HelloWorld::collisionDetection()
     
     // 子弹跟敌机
     CCRect bulletRec = bullet->boundingBox();
-    /*
-    for (CCFoePlane *foePlane in foePlanes) {
-        if (CGRectIntersectsRect(bulletRec, foePlane.boundingBox)) {
-            
-            [self resetBullet];
-            [self fowPlaneHitAnimation:foePlane];
-            foePlane.hp = foePlane.hp-(isBigBullet?2:1);
-            if (foePlane.hp<=0) {
-                [self fowPlaneBlowupAnimation:foePlane];
-                [foePlanes removeObject:foePlane];
-            }
-            
-        }
-    }
-    */
     
     CCObject* foeObj;
-    CCARRAY_FOREACH(foePlanes, foeObj){
+    CCARRAY_FOREACH(this->getFoePlanes(), foeObj){
         CCFoePlane *foePlane = (CCFoePlane *)foeObj;
         if (bulletRec.intersectsRect(foePlane->boundingBox())  ) {
             this->resetBullet();
             this->fowPlaneBlowupAnimation(foePlane);
             foePlane->hp = foePlane->hp - (isBigBullet?2:1);
             if (foePlane->hp<=0) {
+                CCLog("##### move out animation:   %d   for hp(%d)",foePlane->__id,foePlane->hp);
                 this->fowPlaneBlowupAnimation(foePlane);
-                foePlanes->removeObject(foePlane);
+                CCLog("##### move out begin:   %d   for hp(%d)",foePlane->__id,foePlane->hp);
+                this->getFoePlanes()->removeObject(foePlane);
+                CCLog("##### move out end:   %d   for hp(%d)",foePlane->__id,foePlane->hp);
             }
         }
     }
@@ -461,53 +456,41 @@ void HelloWorld::collisionDetection()
     playerRec.size.width -= 50;
     playerRec.origin.y -= 10;
     playerRec.size.height -= 10;
-    /*
-    for (CCFoePlane *foePlane in foePlanes) {
-        if (CGRectIntersectsRect(playerRec, foePlane.boundingBox)) {
-            [self gameOver];
-            [self playerBlowupAnimation];
-            [self fowPlaneBlowupAnimation:foePlane];
-            [foePlanes removeObject:foePlane];
-        }
-    }
-     */
+    
     CCObject *foeObj3;
-    CCARRAY_FOREACH(foePlanes, foeObj3){
+    CCARRAY_FOREACH(this->getFoePlanes(), foeObj3){
         CCFoePlane *foePlane = (CCFoePlane *)foeObj3;
         if (playerRec.intersectsRect(foePlane->boundingBox()) ) {
+            CCLog("@@@@@ shit, was killed  by:   %d",foePlane->__id);
+            
             this->gameOver();
             this->playerBlowupAnimation();
             this->fowPlaneBlowupAnimation(foePlane);
-            foePlanes->removeObject(foePlane);
+            this->getFoePlanes()->removeObject(foePlane);
         }
     }
     
-    // 飞机跟道具
+    // 飞机跟道具 
     
     if (isVisible) {
         CCRect playerRec1 = player->boundingBox();
-        CCRect propRec = prop->prop->boundingBox();
+        CCRect propRec = prop->getProp()->boundingBox();
         if (playerRec1.intersectsRect(propRec)) {
             
-            prop->prop->stopAllActions();
-            prop->prop->removeFromParent();
+            prop->getProp()->stopAllActions();
+            prop->getProp()->removeFromParent();
             isVisible = false;
             
             if (prop->type == propsTypeBullet) {
                 isBigBullet = true;
                 isChangeBullet = true;
             }else if (prop->type == propsTypeBomb) {
-                /*
-                for (CCFoePlane *foePlane in foePlanes) {
-                    [self fowPlaneBlowupAnimation:foePlane];
-                }
-                */
                 CCObject *foeObj4;
-                CCARRAY_FOREACH(foePlanes, foeObj4){
+                CCARRAY_FOREACH(this->getFoePlanes(), foeObj4){
                     CCFoePlane *foePlane = (CCFoePlane *)foeObj4;
                     this->fowPlaneBlowupAnimation(foePlane);
                 }
-                foePlanes->removeAllObjects();
+                this->getFoePlanes()->removeAllObjects();
             }
         }
     }
@@ -631,8 +614,8 @@ void HelloWorld::playerBlowupEnd(CCObject* sender)
 
 void HelloWorld::blowupEnd(CCObject* sender)
 {
-    
     CCFoePlane *foePlane = (CCFoePlane *) sender;
+    CCLog("----- blow up end: %d",foePlane->__id);
     foePlane->removeFromParent();
 }
 
@@ -660,8 +643,9 @@ void HelloWorld::gameOver()
 
 void HelloWorld::restartFn()
 {
+    __cnt = 1;
     this->removeAllChildren();
-    foePlanes->removeAllObjects();
+    this->getFoePlanes()->removeAllObjects();
     this->initData();
     this->loadBackground();
     this->loadPlayer();

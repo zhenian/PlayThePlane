@@ -19,7 +19,7 @@ public:
     static CCFoePlane* createWithSpriteFrameName(const char *pszSpriteFrameName);
 
 public:
-    int planeType, hp, speed;
+    int planeType, hp, speed,__id;
  
 };
 

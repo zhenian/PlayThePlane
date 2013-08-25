@@ -8,10 +8,11 @@
 
 #include "CCFoePlane.h"
 
-CCFoePlane::CCFoePlane(){
+CCFoePlane::CCFoePlane():planeType(0), hp(0), speed(0),__id(0){
 }
 
 CCFoePlane::~CCFoePlane(){
+    CCLOG("~~CCFoePlane()__id=%d",__id);
 }
 
 CCFoePlane* CCFoePlane::createWithSpriteFrameName(const char *pszSpriteFrameName)

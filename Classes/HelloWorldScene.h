@@ -46,7 +46,8 @@ private:
     int bulletTiming;
     
     // 敌方飞机
-    cocos2d::CCArray *foePlanes;
+    //cocos2d::CCArray *foePlanes;
+    CC_SYNTHESIZE_RETAIN(cocos2d::CCArray*, __foePlanes, FoePlanes);
     
     // 添加飞机时机
     int bigPlan;

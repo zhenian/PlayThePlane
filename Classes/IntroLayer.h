@@ -14,12 +14,20 @@
 class IntroLayer : public cocos2d::CCLayer
 {
 public:
+    // 背景
+    cocos2d::CCSprite *BG1;
+    cocos2d::CCSprite *BG2;
+    int adjustmentBG;
+    
     IntroLayer();
 	~IntroLayer();
     CREATE_FUNC(IntroLayer);
     virtual bool init();
+    virtual void update(float delta);
     virtual void onEnter();
     static cocos2d::CCScene* scene();
+    void loadBackground();
+    void backgrouneScroll();
 };
 
 

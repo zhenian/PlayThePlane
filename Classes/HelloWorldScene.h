@@ -55,14 +55,14 @@ private:
     int mediumPlan;
     
     // 道具
-    CCProps *prop;
+    CC_SYNTHESIZE_RETAIN(CCProps *,__prop,Prop);
     // 添加道具时机
     int props;
     // 是否存在
     bool isVisible;
     
-    cocos2d::CCLabelTTF *gameOverLabel;
-    cocos2d::CCMenu *restart;
+    //cocos2d::CCLabelTTF *gameOverLabel;
+    //cocos2d::CCMenu *restart;
     bool isGameOver;
     
 protected:
@@ -81,6 +81,7 @@ protected:
     CCFoePlane* makeMediumFoePlane();
     CCFoePlane* makeSmallFoePlane();
     void makeProps();
+    void resetProps();
     void bulletTimingFn();
     void collisionDetection();
     void fowPlaneHitAnimation(CCFoePlane* foePlane);

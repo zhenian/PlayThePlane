@@ -23,9 +23,7 @@ CCScene* HelloWorld::scene()
 HelloWorld::~HelloWorld()
 {
     CC_SAFE_RELEASE_NULL(__foePlanes);
-    if (prop) {
-        prop->release();
-    }
+    CC_SAFE_RELEASE_NULL(__prop);
 }
 
 HelloWorld::HelloWorld():
@@ -45,11 +43,11 @@ __foePlanes(NULL),
 bigPlan(0),
 smallPlan(0),
 mediumPlan(0),
-prop(NULL),
+__prop(NULL),
 props(0),
 isVisible(false),
-gameOverLabel(NULL),
-restart(NULL),
+//gameOverLabel(NULL),
+//restart(NULL),
 isGameOver(false)
 {
 }
@@ -65,8 +63,6 @@ bool HelloWorld::init()
         return false;
     }
     
-    CCSpriteFrameCache *cache = CCSpriteFrameCache::sharedSpriteFrameCache();
-    cache->addSpriteFramesWithFile("gameArts.plist", "gameArts.png");
     CCTexture2D *texture = CCTextureCache::sharedTextureCache()->textureForKey("gameArts.png");
     CCSpriteBatchNode *spriteBatch = CCSpriteBatchNode::createWithTexture(texture);
     this->addChild(spriteBatch);
@@ -78,10 +74,7 @@ bool HelloWorld::init()
     this->resetBullet();
     this->scheduleUpdate();
     this->setTouchEnabled(true);
-    //CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
-    // touch事件代理
-    //[[[CCDirector sharedDirector] touchDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
-    
+
     return true;
 }
 
@@ -94,6 +87,7 @@ void HelloWorld::update(float delta){
         this->collisionDetection();
         this->makeProps();
         this->bulletTimingFn();
+        this->resetProps();
     }
 }
 
@@ -300,13 +294,14 @@ void HelloWorld::moveFoePlane()
         foe->setPosition(ccp(foe->getPositionX(), foe->getPositionY()-foe->speed));
          // 敌机出了底屏
         if (foe->getPositionY()< -75) {
-            CCLog("-------  out of scream  1   __id=%d",foe->__id);
+            //CCLog("-------  out of scream  1   __id=%d",foe->__id);
+            foe->stopAllActions();
             this->getFoePlanes()->removeObject(foe);
             if(foe == NULL){ 
             }else{
-                CCLog("-------  out of scream  2   __id=%d",foe->__id);
+                //CCLog("-------  out of scream  2   __id=%d",foe->__id);
                 foe->removeFromParent();//// ??????
-                CCLog("--------------  foe is NOT NULL removve from parent (%d) %d",foe->__id,foe==NULL);
+                //CCLog("--------------  foe is NOT NULL removve from parent (%d) %d",foe->__id,foe==NULL);
             }
         }
     }
@@ -400,17 +395,27 @@ CCFoePlane* HelloWorld::makeSmallFoePlane()
 void HelloWorld::makeProps()
 {
     props++;
-    if (props>1520) {
-        prop = CCProps::create();
-        prop->initWithType((propsType)((arc4random()%2)+4));// ?????
-        this->addChild(prop->getProp());
-        prop->propAnimation();
-        prop->retain();
+    if (props>500) {//1520
+        this->setProp(CCProps::create());
+        this->getProp()->initWithType((propsType)((arc4random()%2)+4));// ?????
+        this->addChild(this->getProp()->getProp());
+        this->getProp()->propAnimation();
+        //this->getProp()->retain(); ?????
         props = 0;
-        isVisible = false;
+        isVisible = true;
     }
-    
 }
+//  没接住道具, 出了底屏
+void HelloWorld::resetProps()
+{
+    if (isVisible) {
+        if(this->getProp()->getProp()->getPositionY() < -75){
+            isVisible = false;
+            CCLog("==============  没接住道具, 出了底屏");
+        }
+    }
+}
+
 
 // 子弹持续时间
 void HelloWorld::bulletTimingFn()
@@ -438,14 +443,14 @@ void HelloWorld::collisionDetection()
         CCFoePlane *foePlane = (CCFoePlane *)foeObj;
         if (bulletRec.intersectsRect(foePlane->boundingBox())  ) {
             this->resetBullet();
-            this->fowPlaneBlowupAnimation(foePlane);
+            this->fowPlaneHitAnimation(foePlane);
             foePlane->hp = foePlane->hp - (isBigBullet?2:1);
             if (foePlane->hp<=0) {
-                CCLog("##### move out animation:   %d   for hp(%d)",foePlane->__id,foePlane->hp);
+                //CCLog("##### move out animation:   %d   for hp(%d)",foePlane->__id,foePlane->hp);
                 this->fowPlaneBlowupAnimation(foePlane);
-                CCLog("##### move out begin:   %d   for hp(%d)",foePlane->__id,foePlane->hp);
+                //CCLog("##### move out begin:   %d   for hp(%d)",foePlane->__id,foePlane->hp);
                 this->getFoePlanes()->removeObject(foePlane);
-                CCLog("##### move out end:   %d   for hp(%d)",foePlane->__id,foePlane->hp);
+                //CCLog("##### move out end:   %d   for hp(%d)",foePlane->__id,foePlane->hp);
             }
         }
     }
@@ -461,12 +466,12 @@ void HelloWorld::collisionDetection()
     CCARRAY_FOREACH(this->getFoePlanes(), foeObj3){
         CCFoePlane *foePlane = (CCFoePlane *)foeObj3;
         if (playerRec.intersectsRect(foePlane->boundingBox()) ) {
-            CCLog("@@@@@ shit, i was killed  by:   %d",foePlane->__id);
+            CCLog("@@@@@ shit,i was killed  by:   %d",foePlane->__id);
             
-            this->gameOver();
             this->playerBlowupAnimation();
-            this->fowPlaneBlowupAnimation(foePlane);
+            this->fowPlaneBlowupAnimation(foePlane);// 同归于尽
             this->getFoePlanes()->removeObject(foePlane);
+            this->gameOver();
         }
     }
     
@@ -474,21 +479,23 @@ void HelloWorld::collisionDetection()
     
     if (isVisible) {
         CCRect playerRec1 = player->boundingBox();
-        CCRect propRec = prop->getProp()->boundingBox();
+        CCRect propRec = this->getProp()->getProp()->boundingBox();
         if (playerRec1.intersectsRect(propRec)) {
             
-            prop->getProp()->stopAllActions();
-            prop->getProp()->removeFromParent();
+            this->getProp()->getProp()->stopAllActions();
+            this->getProp()->getProp()->removeFromParent();
             isVisible = false;
             
-            if (prop->type == propsTypeBullet) {
+            if (this->getProp()->type == propsTypeBullet) {
+                CCLog("========= 大力丸子");
                 isBigBullet = true;
                 isChangeBullet = true;
-            }else if (prop->type == propsTypeBomb) {
+            }else if (this->getProp()->type == propsTypeBomb) {
+                CCLog("========= 意念一直线，敌人死光光");
                 CCObject *foeObj4;
                 CCARRAY_FOREACH(this->getFoePlanes(), foeObj4){
                     CCFoePlane *foePlane = (CCFoePlane *)foeObj4;
-                    this->fowPlaneBlowupAnimation(foePlane);
+                    this->fowPlaneBlowupAnimation(foePlane); 
                 }
                 this->getFoePlanes()->removeAllObjects();
             }
@@ -576,15 +583,14 @@ void HelloWorld::fowPlaneBlowupAnimation(CCFoePlane*foePlane)
     CCAnimation* animPlayer = CCAnimation::createWithSpriteFrames(foePlaneActionArray,0.1f);
     //生成动画播放的行为对象
     CCAnimate* actFowPlane = CCAnimate::create(animPlayer);
-    //CCCallFuncN* end = CCCallFuncN::create(this, callfuncN_selector(HelloWorld::blowupEnd));//?????
-    //[CCCallFuncN actionWithTarget:self selector:@selector(blowupEnd:)];
     //清空缓存数组
     foePlaneActionArray->removeAllObjects();
     
-    CCLog("----- 爆炸动画 begin: %d",foePlane->__id);
+    //CCLog("----- 爆炸动画 begin: %d",foePlane->__id);
     foePlane->runAction(CCSequence::create(actFowPlane, CCCallFuncN::create(this, callfuncN_selector(HelloWorld::blowupEnd)), NULL));
-    //foePlane->runAction(CCSequence::create(actFowPlane, CCCallFuncN::create(this, callfuncN_selector(HelloWorld::blowupEnd)),NULL));
-    CCLog("----- 爆炸动画 end: %d",foePlane->__id);
+    
+    
+    //CCLog("----- 爆炸动画 end: %d",foePlane->__id);
 }
 
 // 飞机爆炸 
@@ -632,14 +638,18 @@ void HelloWorld::gameOver()
         node->stopAllActions();
     }
     
-    gameOverLabel = CCLabelTTF::create("GameOver" ,"MarkerFelt-Thin",35);
+    cocos2d::CCLabelTTF *gameOverLabel = CCLabelTTF::create("飞机大战分类" ,"MarkerFelt-Thin",35);
     gameOverLabel->setPosition(ccp(160, 300));
     this->addChild(gameOverLabel,4);
     
-    CCMenuItemFont *gameOverItem = CCMenuItemFont::create("restart", this, menu_selector(HelloWorld::restartFn));
+    cocos2d::CCLabelTTF *scoreLabel = CCLabelTTF::create(CCString::createWithFormat("%d",this->score)->getCString() ,"MarkerFelt-Thin",25);
+    scoreLabel->setPosition(ccp(160, 250));
+    this->addChild(scoreLabel,4);
+    
+    CCMenuItemFont *gameOverItem = CCMenuItemFont::create("重玩", this, menu_selector(HelloWorld::restartFn));
     gameOverItem->setFontName("MarkerFelt-Thin");
     gameOverItem->setFontSize(30);
-    restart = CCMenu::create(gameOverItem,NULL);
+    cocos2d::CCMenu *restart = CCMenu::create(gameOverItem,NULL);
     restart->setPosition(ccp(160, 200));
     this->addChild(restart,4);
 }

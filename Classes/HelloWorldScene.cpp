@@ -461,7 +461,7 @@ void HelloWorld::collisionDetection()
     CCARRAY_FOREACH(this->getFoePlanes(), foeObj3){
         CCFoePlane *foePlane = (CCFoePlane *)foeObj3;
         if (playerRec.intersectsRect(foePlane->boundingBox()) ) {
-            CCLog("@@@@@ shit, was killed  by:   %d",foePlane->__id);
+            CCLog("@@@@@ shit, i was killed  by:   %d",foePlane->__id);
             
             this->gameOver();
             this->playerBlowupAnimation();
@@ -576,12 +576,15 @@ void HelloWorld::fowPlaneBlowupAnimation(CCFoePlane*foePlane)
     CCAnimation* animPlayer = CCAnimation::createWithSpriteFrames(foePlaneActionArray,0.1f);
     //生成动画播放的行为对象
     CCAnimate* actFowPlane = CCAnimate::create(animPlayer);
-    CCCallFuncN* end = CCCallFuncN::create(this, callfuncN_selector(HelloWorld::blowupEnd));//?????
+    //CCCallFuncN* end = CCCallFuncN::create(this, callfuncN_selector(HelloWorld::blowupEnd));//?????
     //[CCCallFuncN actionWithTarget:self selector:@selector(blowupEnd:)];
     //清空缓存数组
     foePlaneActionArray->removeAllObjects();
     
-    foePlane->runAction(CCSequence::create(actFowPlane, end, NULL));
+    CCLog("----- 爆炸动画 begin: %d",foePlane->__id);
+    foePlane->runAction(CCSequence::create(actFowPlane, CCCallFuncN::create(this, callfuncN_selector(HelloWorld::blowupEnd)), NULL));
+    //foePlane->runAction(CCSequence::create(actFowPlane, CCCallFuncN::create(this, callfuncN_selector(HelloWorld::blowupEnd)),NULL));
+    CCLog("----- 爆炸动画 end: %d",foePlane->__id);
 }
 
 // 飞机爆炸 
@@ -643,7 +646,7 @@ void HelloWorld::gameOver()
 
 void HelloWorld::restartFn()
 {
-    __cnt = 1;
+    //__cnt = 1;
     this->removeAllChildren();
     this->getFoePlanes()->removeAllObjects();
     this->initData();
